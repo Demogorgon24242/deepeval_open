@@ -290,81 +290,89 @@ class TestRunManager:
         print(table)
         print(f"Total evaluation tokens cost: {test_run.evaluation_cost} USD")
 
+    # def post_test_run(self, test_run: TestRun):
+    #     console = Console()
+
+    #     for test_case in test_run.test_cases:
+    #         test_case.id = None
+
+    #     if is_confident() and self.disable_request is False:
+    #         BATCH_SIZE = 50
+    #         initial_batch = test_run.test_cases[:BATCH_SIZE]
+    #         remaining_test_cases = test_run.test_cases[BATCH_SIZE:]
+    #         if len(remaining_test_cases) > 0:
+    #             console.print(
+    #                 "Sending a large test run to Confident, this might take a bit longer than usual..."
+    #             )
+
+    #         ####################
+    #         ### POST REQUEST ###
+    #         ####################
+    #         test_run.test_cases = initial_batch
+    #         try:
+    #             body = test_run.model_dump(by_alias=True, exclude_none=True)
+    #         except AttributeError:
+    #             # Pydantic version below 2.0
+    #             body = test_run.dict(by_alias=True, exclude_none=True)
+    #         api = Api()
+    #         result = api.post_request(
+    #             endpoint=Endpoints.TEST_RUN_ENDPOINT.value,
+    #             body=body,
+    #         )
+    #         response = TestRunHttpResponse(
+    #             testRunId=result["testRunId"],
+    #             projectId=result["projectId"],
+    #             link=result["link"],
+    #         )
+    #         link = response.link
+    #         ################################################
+    #         ### Send the remaining test cases in batches ###
+    #         ################################################
+    #         for i in range(0, len(remaining_test_cases), BATCH_SIZE):
+    #             body = None
+    #             remaining_test_run = RemainingTestRun(
+    #                 testRunId=response.testRunId,
+    #                 testCases=remaining_test_cases[i : i + BATCH_SIZE],
+    #             )
+    #             try:
+    #                 body = remaining_test_run.model_dump(
+    #                     by_alias=True, exclude_none=True
+    #                 )
+    #             except AttributeError:
+    #                 # Pydantic version below 2.0
+    #                 body = remaining_test_run.dict(
+    #                     by_alias=True, exclude_none=True
+    #                 )
+
+    #             try:
+    #                 result = api.put_request(
+    #                     endpoint=Endpoints.TEST_RUN_ENDPOINT.value,
+    #                     body=body,
+    #                 )
+    #             except Exception as e:
+    #                 remaining_count = len(remaining_test_cases) - i
+    #                 message = f"Unexpected error when sending the last {remaining_count} test cases. Incomplete test run available at {link}"
+    #                 raise Exception(message) from e
+
+    #         console.print(
+    #             "✅ Tests finished! View results on "
+    #             f"[link={link}]{link}[/link]"
+    #         )
+    #         if test_run.deployment == False:
+    #             webbrowser.open(link)
+
+    #     else:
+    #         console.print(
+    #             '✅ Tests finished! Run "deepeval login" to view evaluation results on the web.'
+    #         )
+
     def post_test_run(self, test_run: TestRun):
         console = Console()
 
         for test_case in test_run.test_cases:
             test_case.id = None
-
-        if is_confident() and self.disable_request is False:
-            BATCH_SIZE = 50
-            initial_batch = test_run.test_cases[:BATCH_SIZE]
-            remaining_test_cases = test_run.test_cases[BATCH_SIZE:]
-            if len(remaining_test_cases) > 0:
-                console.print(
-                    "Sending a large test run to Confident, this might take a bit longer than usual..."
-                )
-
-            ####################
-            ### POST REQUEST ###
-            ####################
-            test_run.test_cases = initial_batch
-            try:
-                body = test_run.model_dump(by_alias=True, exclude_none=True)
-            except AttributeError:
-                # Pydantic version below 2.0
-                body = test_run.dict(by_alias=True, exclude_none=True)
-            api = Api()
-            result = api.post_request(
-                endpoint=Endpoints.TEST_RUN_ENDPOINT.value,
-                body=body,
-            )
-            response = TestRunHttpResponse(
-                testRunId=result["testRunId"],
-                projectId=result["projectId"],
-                link=result["link"],
-            )
-            link = response.link
-            ################################################
-            ### Send the remaining test cases in batches ###
-            ################################################
-            for i in range(0, len(remaining_test_cases), BATCH_SIZE):
-                body = None
-                remaining_test_run = RemainingTestRun(
-                    testRunId=response.testRunId,
-                    testCases=remaining_test_cases[i : i + BATCH_SIZE],
-                )
-                try:
-                    body = remaining_test_run.model_dump(
-                        by_alias=True, exclude_none=True
-                    )
-                except AttributeError:
-                    # Pydantic version below 2.0
-                    body = remaining_test_run.dict(
-                        by_alias=True, exclude_none=True
-                    )
-
-                try:
-                    result = api.put_request(
-                        endpoint=Endpoints.TEST_RUN_ENDPOINT.value,
-                        body=body,
-                    )
-                except Exception as e:
-                    remaining_count = len(remaining_test_cases) - i
-                    message = f"Unexpected error when sending the last {remaining_count} test cases. Incomplete test run available at {link}"
-                    raise Exception(message) from e
-
-            console.print(
-                "✅ Tests finished! View results on "
-                f"[link={link}]{link}[/link]"
-            )
-            if test_run.deployment == False:
-                webbrowser.open(link)
-
-        else:
-            console.print(
-                '✅ Tests finished! Run "deepeval login" to view evaluation results on the web.'
-            )
+        console.print(
+                '✅ Tests finished! Run to view evaluation results ')
 
     def save_test_run_locally(self):
         local_folder = os.getenv("DEEPEVAL_RESULTS_FOLDER")
