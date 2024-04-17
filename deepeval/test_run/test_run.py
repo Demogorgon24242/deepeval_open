@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 import json
 from pydantic import BaseModel, Field
 from typing import Any, Optional, List, Dict, Union
@@ -10,7 +11,7 @@ import portalocker
 from rich.table import Table
 from rich.console import Console
 from rich import print
-
+from rich_tools import table_to_df
 from deepeval.metrics import BaseMetric
 from deepeval.api import Api, Endpoints
 from deepeval.test_run.api import (
@@ -289,6 +290,10 @@ class TestRunManager:
 
         print(table)
         print(f"Total evaluation tokens cost: {test_run.evaluation_cost} USD")
+        df = pd.DataFrame()
+        df= table_to_df(table)
+        df.to_csv('temp_test_run.csv')
+        print("Your file is saved locally to view.")
 
     # def post_test_run(self, test_run: TestRun):
     #     console = Console()
