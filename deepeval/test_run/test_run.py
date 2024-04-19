@@ -245,15 +245,6 @@ class TestRunManager:
                     pass_count += 1
                 else:
                     fail_count += 1
-
-            table.add_row(
-                test_case_name,
-                "",
-                "",
-                "",
-                f"{round((100*pass_count)/(pass_count+fail_count),2)}%",
-            )
-
             for metric_metadata in test_case.metrics_metadata:
                 if metric_metadata.error:
                     status = "[red]ERRORED[/red]"
@@ -261,8 +252,7 @@ class TestRunManager:
                     status = "[green]PASSED[/green]"
                 else:
                     status = "[red]FAILED[/red]"
-
-                evaluation_model = metric_metadata.evaluation_model
+            evaluation_model = metric_metadata.evaluation_model
                 if evaluation_model is None:
                     evaluation_model = "n/a"
 
@@ -271,22 +261,22 @@ class TestRunManager:
                 else:
                     metric_score = None
 
-                table.add_row(
-                    "",
-                    str(metric_metadata.metric),
-                    f"{metric_score} (threshold={metric_metadata.threshold}, evaluation model={evaluation_model}, reason={metric_metadata.reason}, error={metric_metadata.error})",
-                    status,
-                    "",
-                )
+            table.add_row(
+                test_case_name,
+                str(metric_metadata.metric),
+                f"{metric_score} (threshold={metric_metadata.threshold}, evaluation model={evaluation_model}, reason={metric_metadata.reason}, error={metric_metadata.error})",
+                status,
+                f"{round((100*pass_count)/(pass_count+fail_count),2)}%",
+            )
 
-            if index is not len(self.test_run.test_cases) - 1:
-                table.add_row(
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                )
+            # if index is not len(self.test_run.test_cases) - 1:
+            #     table.add_row(
+            #         "",
+            #         "",
+            #         "",
+            #         "",
+            #         "",
+            #     )
 
         print(table)
         print(f"Total evaluation tokens cost: {test_run.evaluation_cost} USD")
