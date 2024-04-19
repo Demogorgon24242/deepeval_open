@@ -253,12 +253,12 @@ class TestRunManager:
                 else:
                     status = "[red]FAILED[/red]"
             evaluation_model = metric_metadata.evaluation_model
-                if evaluation_model is None:
+            if evaluation_model is None:
                     evaluation_model = "n/a"
 
-                if metric_metadata.score is not None:
+            if metric_metadata.score is not None:
                     metric_score = round(metric_metadata.score, 2)
-                else:
+            else:
                     metric_score = None
 
             table.add_row(
