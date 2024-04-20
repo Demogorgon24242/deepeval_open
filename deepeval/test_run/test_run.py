@@ -232,11 +232,14 @@ class TestRunManager:
         table.add_column("Score", justify="left")
         table.add_column("Status", justify="left")
         table.add_column("Overall Success Rate", justify="left")
-
+        row=0
         for index, test_case in enumerate(test_run.test_cases):
+            
             pass_count = 0
             fail_count = 0
-            test_case_name = test_case.name
+            test_case_name = test_case.name +"_"+ str(row)
+            row=int(row)
+            row+=1
             if test_case.id:
                 test_case_name += f" ({test_case.id})"
 
@@ -268,21 +271,12 @@ class TestRunManager:
                 status,
                 f"{round((100*pass_count)/(pass_count+fail_count),2)}%",
             )
-
-            # if index is not len(self.test_run.test_cases) - 1:
-            #     table.add_row(
-            #         "",
-            #         "",
-            #         "",
-            #         "",
-            #         "",
-            #     )
-
+        
         print(table)
         print(f"Total evaluation tokens cost: {test_run.evaluation_cost} USD")
         df = pd.DataFrame()
         df= table_to_df(table)
-        df.to_csv('temp_test_run.csv')
+        df.to_csv('temp_test_run.csv',index=False)
         print("Your file is saved locally to view.")
 
     # def post_test_run(self, test_run: TestRun):
